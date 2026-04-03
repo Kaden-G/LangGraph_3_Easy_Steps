@@ -503,14 +503,6 @@ If you've worked through the four exercises, you can speak fluently about:
 
 **Quality gates.** LLM-as-judge nodes for document relevance grading and hallucination checking, with configurable retry loops and guard conditions.
 
-### The 30-second interview pitch
-
-"I built a multi-agent RAG pipeline with LangGraph using five LLM-powered nodes connected by conditional routing. It has two quality gates — a document relevance grader and a hallucination checker — with feedback loops that automatically retry when quality thresholds aren't met. Every node transition is checkpointed for full auditability."
-
-### The AI Security framing
-
-"The pipeline maps directly to OWASP LLM Top 10 mitigations. The hallucination checker addresses LLM09 (overreliance). The doc grader is a retrieval validation gate. Checkpointing provides a full audit trail that maps to NIST AI RMF's Measure function. Every node boundary is a potential human-in-the-loop insertion point for governance review."
-
 ### Vocabulary that signals depth
 
 - State reducers and `Annotated` types
