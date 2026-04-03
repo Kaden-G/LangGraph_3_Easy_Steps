@@ -1,6 +1,6 @@
 # LangGraph Bootcamp — Exercise Files
 
-Companion code for [LangGraph in Four Hours](./langgraph-in-four-hours.md).
+Companion code for [LangGraph 3 Easy Steps](./langgraph-in-four-hours.md).
 
 ## Setup
 
