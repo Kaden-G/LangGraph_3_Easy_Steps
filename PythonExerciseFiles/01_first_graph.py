@@ -1,5 +1,5 @@
 """
-Hour 1: Your First LangGraph Graph
+Step 1: Your First LangGraph Graph
 ====================================
 Mental model:
   - A LangGraph graph is like a military OPORD turned into code.
@@ -25,7 +25,7 @@ from langgraph.graph import StateGraph, START, END
 # Fields it doesn't return stay unchanged.
 #
 # TypedDict gives you type hints so your IDE can autocomplete state["field"].
-# In Hour 2, we'll add "reducers" that let fields ACCUMULATE instead of overwrite.
+# In Step 2, we'll add "reducers" that let fields ACCUMULATE instead of overwrite.
 
 class IntelState(TypedDict):
     report: str          # Input: the raw intelligence report text
@@ -120,7 +120,7 @@ def respond_low(state: IntelState) -> dict:
 #
 # Also critical: every possible return value must be reachable.
 # If your if/elif/else can never reach a branch, that node is orphaned —
-# wired into the graph but never executed. (This was your Hour 1 bug.)
+# wired into the graph but never executed. (This was your Step 1 bug.)
 
 def route_by_threat(state: IntelState) -> str:
     """

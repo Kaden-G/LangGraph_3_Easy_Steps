@@ -1,7 +1,7 @@
 """
-Hour 2: State Reducers, Conditional Loops, and Checkpointing
+Step 2: State Reducers, Conditional Loops, and Checkpointing
 =============================================================
-This builds on Hour 1 with three new concepts:
+This builds on Step 1 with three new concepts:
 
 1. STATE REDUCERS — fields that ACCUMULATE instead of overwrite
    Without a reducer:  Node returns {"findings": ["C"]}  → state becomes ["C"]      (A and B are gone)
@@ -34,7 +34,7 @@ from langgraph.checkpoint.memory import MemorySaver
 
 
 # ─── STEP 1: STATE WITH REDUCERS ────────────────────────────────────────
-# Compare this to Hour 1's IntelState where every field just overwrites.
+# Compare this to Step 1's IntelState where every field just overwrites.
 #
 # The magic is: Annotated[list[str], add]
 #   - list[str]    = the type (a list of strings)
@@ -126,7 +126,7 @@ def quality_gate(state: ResearchState) -> str:
     """
     ROUTER: The conditional edge that enables LOOPING.
     
-    This is conceptually the same as route_by_threat from Hour 1,
+    This is conceptually the same as route_by_threat from Step 1,
     but now one of the return values points BACKWARD in the graph
     (to increment_loop, which connects back to search_web).
     

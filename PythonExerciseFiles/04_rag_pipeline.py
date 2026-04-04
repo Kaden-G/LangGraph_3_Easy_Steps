@@ -120,7 +120,7 @@ def simple_retriever(query: str, top_k: int = 3) -> list[dict]:
 
 
 # ─── STATE ───────────────────────────────────────────────────────────────
-# This combines everything from Hours 1-3:
+# This combines everything from Steps 1-3:
 #   - Reducers for accumulating documents and audit messages
 #   - Overwrite fields for current query and routing decisions
 #   - A retry counter to prevent infinite loops

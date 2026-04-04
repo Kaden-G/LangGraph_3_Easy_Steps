@@ -1,5 +1,5 @@
 """
-Hour 3: Multi-Agent Patterns — "The Crew Chief"
+Step 3: Multi-Agent Patterns — "The Crew Chief"
 =================================================
 Three new concepts that make LangGraph production-grade:
 
@@ -12,7 +12,7 @@ This builds a 3-agent system:
   - Researcher: retrieves/finds information (has a search tool)
   - Writer: synthesizes findings into a polished answer
 
-This is the exact architecture for your Hour 4 RAG pipeline.
+This is the exact architecture for your Step 3b RAG pipeline.
 
 PREREQUISITE:
   pip install langchain-anthropic
@@ -31,7 +31,7 @@ from langgraph.checkpoint.memory import MemorySaver
 # This is the AI "brain" that nodes will use.
 # It's created ONCE, outside the nodes, and shared.
 #
-# llm.invoke("string")           → quick and simple (like Hour 1 example)
+# llm.invoke("string")           → quick and simple (like Step 1 example)
 # llm.invoke([messages])         → the real pattern (list of message objects)
 #
 # The messages pattern matters because LLMs understand ROLES:
@@ -48,7 +48,7 @@ llm = ChatAnthropic(model="claude-sonnet-4-20250514")
 
 
 # ─── CONCEPT 2: MESSAGE-BASED STATE ─────────────────────────────────────
-# In Hour 1-2, our state had simple fields like "query" and "findings".
+# In Steps 1-2, our state had simple fields like "query" and "findings".
 # Multi-agent systems typically use MESSAGES as the primary state.
 #
 # Why? Because agents communicate by adding messages to a shared history.
@@ -56,7 +56,7 @@ llm = ChatAnthropic(model="claude-sonnet-4-20250514")
 # "Here's my analysis." The message list IS the conversation between agents.
 #
 # The reducer (add) means each node APPENDS messages — nothing gets lost.
-# This is the same pattern as Hour 2's findings accumulator, but with
+# This is the same pattern as Step 2's findings accumulator, but with
 # message objects instead of plain strings.
 
 class AgentState(TypedDict):
@@ -79,7 +79,7 @@ def supervisor(state: AgentState) -> dict:
     Reads: messages (full conversation history)
     Writes: next_agent (routing decision)
     
-    This is the KEY difference from Hour 1's route_by_threat:
+    This is the KEY difference from Step 1's route_by_threat:
     Instead of if/else logic, an LLM makes the routing decision.
     The LLM can reason about nuance that rules can't capture.
     
@@ -130,7 +130,7 @@ def researcher(state: AgentState) -> dict:
     Writes: messages (APPENDS its findings as a new AIMessage)
     
     In this example, the researcher is a plain LLM call.
-    In Hour 4 (your RAG pipeline), this node will:
+    In Step 3b (your RAG pipeline), this node will:
       1. Generate a search query from the conversation
       2. Call a vector store / retriever tool
       3. Return the retrieved documents as a message
@@ -152,7 +152,7 @@ def researcher(state: AgentState) -> dict:
     bind_tools() tells the LLM "you can call these functions."
     The LLM decides WHEN to call them based on the conversation.
     LangGraph's prebuilt ToolNode handles executing the tool calls.
-    We'll use this in Hour 4.
+    We'll use this in Step 3b.
     """
     messages = state["messages"]
 
@@ -218,7 +218,7 @@ def route_to_agent(state: AgentState) -> str:
     """
     ROUTER: Translates the supervisor's decision into a graph edge.
     
-    Remember from Hour 1: routers return a STRING that matches a node name.
+    Remember from Step 1: routers return a STRING that matches a node name.
     The supervisor node sets next_agent via LLM; this function just reads it.
     
     "FINISH" maps to END — that's how the graph knows to stop.

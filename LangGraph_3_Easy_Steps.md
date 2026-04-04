@@ -1,4 +1,4 @@
-# LangGraph in Four Hours
+# LangGraph in 3 Easy Steps
 
 **A practitioner's guide to building stateful multi-agent systems**
 
@@ -12,7 +12,7 @@ You've called an LLM API. Maybe you've chained a few calls together. But the mom
 
 LangGraph fixes that. It gives you a graph-based orchestration layer where LLMs live inside nodes, state flows between them, and the wiring handles routing, loops, and checkpoints.
 
-This guide will take you from zero to a production-pattern multi-agent RAG pipeline in four hours. Each hour builds on the last. By the end, you'll have the vocabulary, the mental model, and a working project to point to.
+This guide will take you from zero to a production-pattern multi-agent RAG pipeline in three easy steps. Each step builds on the last. By the end, you'll have the vocabulary, the mental model, and a working project to point to.
 
 ---
 
@@ -66,7 +66,7 @@ Every graph you'll ever build follows this pattern: START → nodes doing work �
 
 ---
 
-## Hour 1 — The wiring diagram
+## Step 1 — The wiring diagram
 
 ### Core vocabulary
 
@@ -122,11 +122,11 @@ That's the template. Every graph you build — from a two-node prototype to a tw
 
 ---
 
-## Hour 2 — The traffic controller
+## Step 2 — The traffic controller
 
 ### The problem with overwriting
 
-In Hour 1, every node overwrites state fields. Node A sets `threat_level`, node B sets `action`. Clean and simple — until you need **accumulation.**
+In Step 1, every node overwrites state fields. Node A sets `threat_level`, node B sets `action`. Clean and simple — until you need **accumulation.**
 
 Imagine a research pipeline: a retriever finds 3 documents, an analyzer reviews them and adds notes, a second retriever pass finds 2 more. If each node overwrites the `documents` field, you lose everything the previous node found. The analyzer's notes obliterate the retriever's results.
 
@@ -183,7 +183,7 @@ Three nodes can all contribute findings, and nothing gets lost. This is what mak
 
 ### Conditional loops
 
-Hour 1 graphs are linear: START → nodes → END. Hour 2 introduces cycles.
+Step 1 graphs are linear: START → nodes → END. Step 2 introduces cycles.
 
 A conditional edge can route *backward* in the graph. If a quality gate decides "not enough data," it can route back to a retriever node. The retriever runs again, appends more findings (via the reducer), and the quality gate re-evaluates.
 
@@ -245,7 +245,7 @@ Why this matters: checkpointing gives you a full audit trail of every state tran
 
 ---
 
-## Hour 3 — The crew chief
+## Step 3 — The crew chief
 
 ### Where the LLM fits
 
@@ -253,10 +253,10 @@ Here's the question that matters: **LangGraph is the wiring. Where does the AI a
 
 Inside the nodes.
 
-Up through Hour 2, our nodes used if/else logic — keyword matching, threshold checks. That was deliberate: learn the plumbing before turning on the water. But in production, nodes are LLM calls:
+Up through Step 2, our nodes used if/else logic — keyword matching, threshold checks. That was deliberate: learn the plumbing before turning on the water. But in production, nodes are LLM calls:
 
 ```python
-# Hour 1 node (no AI)
+# Step 1 node (no AI)
 def analyze(state):
     if "enemy" in state["report"].lower():
         return {"threat_level": "HIGH"}
@@ -413,11 +413,11 @@ response = llm_with_tools.invoke(messages)
 
 ---
 
-## Hour 4 — The portfolio piece
+## Step 3b — The portfolio piece
 
 ### Architecture: multi-agent RAG pipeline
 
-Everything from Hours 1–3 converges into a production-pattern Retrieval-Augmented Generation pipeline. Six nodes, two quality gates, two feedback loops:
+Everything from Steps 1–3 converges into a production-pattern Retrieval-Augmented Generation pipeline. Six nodes, two quality gates, two feedback loops:
 
 ```mermaid
 flowchart TD
@@ -579,4 +579,4 @@ tags: Annotated[list[str], unique_add]
 
 ---
 
-*Built during a 4-hour sprint. Exercises available in the companion code files.*
+*Exercises available in the companion code files.*
