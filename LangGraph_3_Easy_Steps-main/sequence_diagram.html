@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LangGraph Multi-Agent Execution Flow</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+
+        header { text-align: center; margin-bottom: 40px; }
+
+        h1 {
+            font-size: 2.2rem; font-weight: 700; margin-bottom: 8px;
+            background: linear-gradient(135deg, #f59e0b 0%, #e2e8f0 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+
+        .subtitle { font-size: 1rem; color: #9ca3af; }
+
+        .phase-indicator {
+            display: inline-block; margin-top: 16px; font-size: 0.95rem;
+            background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3);
+            padding: 6px 14px; border-radius: 6px; color: #f59e0b; font-weight: 600;
+        }
+
+        /* Phase dots */
+        .phase-dots { display: flex; justify-content: center; gap: 12px; margin-bottom: 24px; }
+        .dot {
+            width: 12px; height: 12px; border-radius: 50%; cursor: pointer;
+            background: rgba(226, 232, 240, 0.2); border: 2px solid rgba(226, 232, 240, 0.3);
+            transition: all 0.3s ease;
+        }
+        .dot.active { background: #f59e0b; border-color: #f59e0b; transform: scale(1.3); }
+        .dot:hover { border-color: #f59e0b; }
+
+        /* Diagram panel */
+        .diagram-panel {
+            background: #16213e; border: 1px solid rgba(226, 232, 240, 0.1);
+            border-radius: 12px; padding: 30px 24px; margin-bottom: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3); overflow-x: auto;
+            display: flex; justify-content: center;
+        }
+
+        #mermaid-diagram { width: 100%; text-align: center; }
+
+        /* Insight box */
+        .insight-box {
+            background: linear-gradient(135deg, rgba(245,158,11,0.12) 0%, rgba(124,58,237,0.12) 100%);
+            border: 1px solid rgba(245,158,11,0.3); border-radius: 8px;
+            padding: 14px 18px; margin-bottom: 24px;
+        }
+        .insight-box strong { color: #f59e0b; font-size: 0.9rem; }
+        .insight-box p { color: #d1d5db; font-size: 0.85rem; line-height: 1.5; margin-top: 4px; }
+
+        /* Explanation */
+        .explanation-panel {
+            background: #16213e; border: 1px solid rgba(226,232,240,0.1);
+            border-radius: 12px; padding: 24px; margin-bottom: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .explanation-panel h2 { font-size: 1.2rem; color: #f59e0b; margin-bottom: 8px; }
+        .explanation-panel p  { color: #d1d5db; line-height: 1.7; font-size: 0.95rem; }
+
+        /* Controls */
+        .controls { display: flex; justify-content: center; gap: 16px; margin-bottom: 30px; }
+        button {
+            background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+            border: none; color: #000; padding: 10px 28px; border-radius: 8px;
+            font-weight: 600; font-size: 0.95rem; cursor: pointer;
+            transition: all 0.3s ease; font-family: 'Inter', sans-serif;
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(245,158,11,0.3); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        footer {
+            text-align: center; color: #6b7280; font-size: 0.85rem;
+            margin-top: 40px; padding-top: 16px;
+            border-top: 1px solid rgba(226,232,240,0.1);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>LangGraph Multi-Agent Execution Flow</h1>
+        <p class="subtitle">Interactive sequence diagram — click through each phase</p>
+        <div class="phase-indicator"><span id="phaseText">Phase 1 of 5 — Initial Routing</span></div>
+    </header>
+
+    <div class="phase-dots" id="phaseDots"></div>
+
+    <div class="diagram-panel">
+        <div id="mermaid-diagram"></div>
+    </div>
+
+    <div id="insightContainer"></div>
+
+    <div class="explanation-panel">
+        <h2 id="explanationTitle"></h2>
+        <p id="explanationContent"></p>
+    </div>
+
+    <div class="controls">
+        <button id="backBtn" onclick="previousPhase()">&#8592; Back</button>
+        <button id="nextBtn" onclick="nextPhase()">Next &#8594;</button>
+    </div>
+
+    <footer>Built as a portfolio piece for LangGraph in Four Hours</footer>
+</div>
+
+<script>
+mermaid.initialize({
+    startOnLoad: false,
+    theme: 'dark',
+    themeVariables: {
+        actorBkg: '#1e293b',
+        actorBorder: '#f59e0b',
+        actorTextColor: '#e2e8f0',
+        signalColor: '#f59e0b',
+        signalTextColor: '#e2e8f0',
+        noteBkgColor: '#1a3a2e',
+        noteTextColor: '#a7f3d0',
+        noteBorderColor: '#059669',
+        sequenceNumberColor: '#f59e0b',
+    },
+    sequence: {
+        mirrorActors: false,
+        actorMargin: 50,
+        messageMargin: 40,
+        boxMargin: 10,
+        useMaxWidth: true,
+    }
+});
+
+const phases = [
+    {
+        title: "Phase 1 — Initial Routing",
+        explanation: "The supervisor LLM reads the user's query and decides which specialist should handle it first. No work has been done yet — this is pure routing. The supervisor doesn't answer the question; it delegates.",
+        mermaid: `sequenceDiagram
+    participant U as User
+    participant R as Graph Runtime
+    participant S as Supervisor
+    participant L as LLM (Claude)
+    participant W as Workers
+
+    U->>R: app.invoke(query)
+    R->>S: supervisor(state)
+    S->>L: Reads query
+    Note over L: SystemMessage:<br/>"You are a coordinator..."
+    L->>S: Returns: "researcher"
+    S->>R: {next_agent: "researcher"}`,
+        insight: "Pure Routing Logic",
+        insightText: "The supervisor is a classifier. It doesn't execute work — it routes. The LLM sees the original query and nothing else."
+    },
+    {
+        title: "Phase 2 — Research",
+        explanation: "The researcher specialist runs with the same LLM but a different system prompt. Its findings are appended to the message list via a state reducer (Annotated[list, add]), not overwritten. This is why every subsequent node can see everything that came before.",
+        mermaid: `sequenceDiagram
+    participant U as User
+    participant R as Graph Runtime
+    participant S as Supervisor
+    participant L as LLM (Claude)
+    participant W as Workers
+
+    R->>W: researcher(state)
+    W->>L: Sees: original query
+    Note over L: SystemMessage:<br/>"You are a researcher..."
+    L->>W: Returns: research findings
+    W->>R: Findings via reducer
+    Note over R: Messages APPENDED<br/>(not overwritten)`,
+        insight: "State Reduction & Accumulation",
+        insightText: "Messages are appended via Annotated[list, add], not overwritten. This creates a growing conversation history that all future nodes can see."
+    },
+    {
+        title: "Phase 3 — Back to Supervisor",
+        explanation: "The supervisor re-evaluates after each worker completes. Because messages accumulate via the reducer, the supervisor now sees the original query AND the researcher's findings. It decides a writer should synthesize the answer. This loop (supervisor → worker → supervisor) is the core of the supervisor pattern.",
+        mermaid: `sequenceDiagram
+    participant U as User
+    participant R as Graph Runtime
+    participant S as Supervisor
+    participant L as LLM (Claude)
+    participant W as Workers
+
+    R->>S: supervisor(state)
+    Note over S: Sees full history:<br/>query + findings
+    S->>L: SystemMessage + full context
+    L->>S: Returns: "writer"
+    S->>R: {next_agent: "writer"}
+    Note over R: Loop: supervisor →<br/>worker → supervisor`,
+        insight: "Re-evaluation with Context",
+        insightText: "The supervisor sees accumulated context. Each loop tightens the decision. This is how supervisors orchestrate multi-step workflows."
+    },
+    {
+        title: "Phase 4 — Writing",
+        explanation: "The writer sees the full conversation: the user's original query, the researcher's findings, and any prior drafts. It synthesizes everything into a polished answer. The final_answer field is set (overwrite, no reducer) — this is the output the user will see.",
+        mermaid: `sequenceDiagram
+    participant U as User
+    participant R as Graph Runtime
+    participant S as Supervisor
+    participant L as LLM (Claude)
+    participant W as Workers
+
+    R->>W: writer(state)
+    W->>L: Sees: query + research findings
+    Note over L: SystemMessage:<br/>"You are a writer..."
+    L->>W: Synthesizes answer
+    Note over W: Sets final_answer<br/>(overwrite, no reducer)
+    W->>R: State updated`,
+        insight: "Synthesis & Output",
+        insightText: "The writer has full context and produces the final artifact. Unlike messages (append via reducer), final_answer overwrites — it's the definitive output."
+    },
+    {
+        title: "Phase 5 — Finish",
+        explanation: "The supervisor sees the completed draft and decides the job is done. 'FINISH' maps to END in the conditional edge, so the graph terminates. The entire conversation — every message from every agent — is preserved in state and available via checkpointing for audit.",
+        mermaid: `sequenceDiagram
+    participant U as User
+    participant R as Graph Runtime
+    participant S as Supervisor
+    participant L as LLM (Claude)
+    participant W as Workers
+
+    R->>S: supervisor(state)
+    S->>L: Sees completed draft
+    Note over L: Full history +<br/>final_answer
+    L->>S: Returns: "FINISH"
+    S->>R: {next_agent: "FINISH"} → END
+    R->>U: Returns final state`,
+        insight: "Termination & Audit",
+        insightText: "The graph ends via conditional logic (FINISH → END). The full execution trace — every message — is preserved in state for checkpointing and audit trails."
+    }
+];
+
+let currentPhase = 0;
+
+function init() {
+    const dots = document.getElementById('phaseDots');
+    phases.forEach((_, i) => {
+        const d = document.createElement('div');
+        d.className = 'dot' + (i === 0 ? ' active' : '');
+        d.onclick = () => goToPhase(i);
+        dots.appendChild(d);
+    });
+    renderPhase();
+}
+
+async function renderPhase() {
+    const phase = phases[currentPhase];
+
+    document.getElementById('phaseText').textContent =
+        `Phase ${currentPhase + 1} of 5 — ${phase.title.split(' — ')[1]}`;
+    document.getElementById('explanationTitle').textContent = phase.title;
+    document.getElementById('explanationContent').textContent = phase.explanation;
+
+    // Render Mermaid diagram
+    const container = document.getElementById('mermaid-diagram');
+    container.innerHTML = '';
+
+    const id = 'mermaid-phase-' + currentPhase;
+    const { svg } = await mermaid.render(id, phase.mermaid);
+    container.innerHTML = svg;
+
+    // Insight box
+    const insightContainer = document.getElementById('insightContainer');
+    insightContainer.innerHTML = `<div class="insight-box"><strong>${phase.insight}</strong><p>${phase.insightText}</p></div>`;
+
+    // Update dots
+    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === currentPhase));
+    document.getElementById('backBtn').disabled = currentPhase === 0;
+    document.getElementById('nextBtn').disabled = currentPhase === phases.length - 1;
+}
+
+function nextPhase() { if (currentPhase < phases.length - 1) { currentPhase++; renderPhase(); } }
+function previousPhase() { if (currentPhase > 0) { currentPhase--; renderPhase(); } }
+function goToPhase(i) { currentPhase = i; renderPhase(); }
+
+window.addEventListener('load', init);
+</script>
+</body>
+</html>
