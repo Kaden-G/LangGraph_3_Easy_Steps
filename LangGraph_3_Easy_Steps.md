@@ -53,13 +53,13 @@ flowchart TD
     med --> END
     low --> END
 
-    style START fill:#f1efe8,stroke:#5f5e5a
-    style END fill:#f1efe8,stroke:#5f5e5a
-    style analyze fill:#e1f5ee,stroke:#0f6e56
-    style decision fill:#faece7,stroke:#993c1d
-    style high fill:#eeedfe,stroke:#534ab7
-    style med fill:#faeeda,stroke:#854f0b
-    style low fill:#e6f1fb,stroke:#185fa5
+    style START fill:#6B7280,stroke:#4B5563,color:#FFFFFF
+    style END fill:#6B7280,stroke:#4B5563,color:#FFFFFF
+    style analyze fill:#059669,stroke:#047857,color:#FFFFFF
+    style decision fill:#D97706,stroke:#B45309,color:#FFFFFF
+    style high fill:#DC2626,stroke:#B91C1C,color:#FFFFFF
+    style med fill:#D97706,stroke:#B45309,color:#FFFFFF
+    style low fill:#2563EB,stroke:#1D4ED8,color:#FFFFFF
 ```
 
 Every graph you'll ever build follows this pattern: START → nodes doing work → conditional routing → END, all reading/writing to the same shared State.
@@ -169,12 +169,12 @@ flowchart LR
         Everything accumulates"]
     end
     
-    style R1 fill:#fcebeb,stroke:#a32d2d
-    style R2 fill:#eaf3de,stroke:#3b6d11
-    style A1 fill:#f1efe8,stroke:#5f5e5a
-    style A2 fill:#f1efe8,stroke:#5f5e5a
-    style N1 fill:#e1f5ee,stroke:#0f6e56
-    style N2 fill:#e1f5ee,stroke:#0f6e56
+    style R1 fill:#DC2626,stroke:#B91C1C,color:#FFFFFF
+    style R2 fill:#059669,stroke:#047857,color:#FFFFFF
+    style A1 fill:#6B7280,stroke:#4B5563,color:#FFFFFF
+    style A2 fill:#6B7280,stroke:#4B5563,color:#FFFFFF
+    style N1 fill:#2563EB,stroke:#1D4ED8,color:#FFFFFF
+    style N2 fill:#2563EB,stroke:#1D4ED8,color:#FFFFFF
 ```
 
 Three nodes can all contribute findings, and nothing gets lost. This is what makes multi-agent collaboration possible — agents can write to the same field without stomping on each other.
@@ -203,13 +203,13 @@ flowchart TD
     
     summarize --> END([END])
 
-    style START fill:#f1efe8,stroke:#5f5e5a
-    style END fill:#f1efe8,stroke:#5f5e5a
-    style search fill:#e6f1fb,stroke:#185fa5
-    style analyze fill:#e1f5ee,stroke:#0f6e56
-    style gate fill:#faece7,stroke:#993c1d
-    style summarize fill:#eeedfe,stroke:#534ab7
-    style increment fill:#faeeda,stroke:#854f0b
+    style START fill:#6B7280,stroke:#4B5563,color:#FFFFFF
+    style END fill:#6B7280,stroke:#4B5563,color:#FFFFFF
+    style search fill:#2563EB,stroke:#1D4ED8,color:#FFFFFF
+    style analyze fill:#059669,stroke:#047857,color:#FFFFFF
+    style gate fill:#D97706,stroke:#B45309,color:#FFFFFF
+    style summarize fill:#7C3AED,stroke:#6D28D9,color:#FFFFFF
+    style increment fill:#0891B2,stroke:#0E7490,color:#FFFFFF
 ```
 
 This is not a Python `while` loop. It's a graph cycle managed by LangGraph. The difference matters because:
@@ -311,12 +311,12 @@ flowchart TD
     
     sup -->|"FINISH"| done([END])
 
-    style query fill:#f1efe8,stroke:#5f5e5a
-    style done fill:#f1efe8,stroke:#5f5e5a
-    style sup fill:#faeeda,stroke:#854f0b
-    style ret fill:#e6f1fb,stroke:#185fa5
-    style ana fill:#e1f5ee,stroke:#0f6e56
-    style wri fill:#eeedfe,stroke:#534ab7
+    style query fill:#6B7280,stroke:#4B5563,color:#FFFFFF
+    style done fill:#6B7280,stroke:#4B5563,color:#FFFFFF
+    style sup fill:#D97706,stroke:#B45309,color:#FFFFFF
+    style ret fill:#2563EB,stroke:#1D4ED8,color:#FFFFFF
+    style ana fill:#059669,stroke:#047857,color:#FFFFFF
+    style wri fill:#7C3AED,stroke:#6D28D9,color:#FFFFFF
 ```
 
 The flow:
@@ -440,15 +440,15 @@ flowchart TD
     gate2 -->|"not grounded"| gen
     gate2 -->|"grounded ✓"| END([END])
 
-    style START fill:#f1efe8,stroke:#5f5e5a
-    style END fill:#f1efe8,stroke:#5f5e5a
-    style qa fill:#e1f5ee,stroke:#0f6e56
-    style ret fill:#e6f1fb,stroke:#185fa5
-    style dg fill:#faece7,stroke:#993c1d
-    style gate1 fill:#faece7,stroke:#993c1d
-    style refine fill:#faeeda,stroke:#854f0b
-    style gen fill:#eeedfe,stroke:#534ab7
-    style gate2 fill:#eeedfe,stroke:#534ab7
+    style START fill:#6B7280,stroke:#4B5563,color:#FFFFFF
+    style END fill:#6B7280,stroke:#4B5563,color:#FFFFFF
+    style qa fill:#059669,stroke:#047857,color:#FFFFFF
+    style ret fill:#2563EB,stroke:#1D4ED8,color:#FFFFFF
+    style dg fill:#D97706,stroke:#B45309,color:#FFFFFF
+    style gate1 fill:#D97706,stroke:#B45309,color:#FFFFFF
+    style refine fill:#0891B2,stroke:#0E7490,color:#FFFFFF
+    style gen fill:#7C3AED,stroke:#6D28D9,color:#FFFFFF
+    style gate2 fill:#7C3AED,stroke:#6D28D9,color:#FFFFFF
 ```
 
 **Query Analyzer** → Takes the user's raw question and produces an optimized search query. (An input transformation gate — in production, you'd add prompt injection detection here.)
